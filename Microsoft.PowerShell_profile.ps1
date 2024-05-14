@@ -8,8 +8,8 @@ function Write-GitBranchName {
     }
 }
 
-function prompt {
-    Write-Host "$(Convert-Path $(Get-Location))" -NoNewline -ForegroundColor blue
+function Prompt {
+    Write-Host $(Convert-Path $(Get-Location)) -NoNewline -ForegroundColor blue
 
     Write-GitBranchName
 
