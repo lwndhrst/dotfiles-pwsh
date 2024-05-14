@@ -1,4 +1,5 @@
 Set-PSReadLineOption -Colors @{ InlinePrediction = "DarkGray" }
+Set-PSReadlineKeyHandler -Key "ctrl+e" -Function AcceptSuggestion
 
 function Write-CurrentWorkingDirectory {
     Write-Host $(Convert-Path $(Get-Location)) -NoNewline -ForegroundColor Blue
