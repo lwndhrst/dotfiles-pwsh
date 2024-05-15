@@ -9,9 +9,8 @@ function Write-GitBranch {
     $branch = $(git rev-parse --abbrev-ref HEAD)
 
     if ($branch) {
-        Write-Host " git:(" -NoNewline -ForegroundColor Blue
-        Write-Host $branch -NoNewline -ForegroundColor Red
-        Write-Host ")" -NoNewline -ForegroundColor Blue
+        Write-Host " on " -NoNewline -ForegroundColor White
+        Write-Host " $branch" -NoNewline -ForegroundColor Magenta
     }
 }
 
