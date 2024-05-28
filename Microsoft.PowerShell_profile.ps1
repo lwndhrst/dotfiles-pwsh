@@ -15,18 +15,33 @@ function Write-GitBranch {
 }
 
 function Write-GitStatus {
-    $status = $(git status --porcelain)
+    $status = @()
 
-    $changes = @()
+    $stash_status = $(git stash list)
+    if ($stash_status) {
+        $status += '$$'
+    }
 
-    foreach ($line in $status) {
-        $change = $line.trimStart().split(' ')[0]
-        if (!$changes.Contains($change)) {
-            $changes += $change
+    $repo_status = $(git status --branch --porcelain)
+    foreach ($line in $repo_status) {
+        $status_code = $line.trimStart().split(' ')[0]
+
+        if ($status_code -eq '##') {
+            if ($line.Contains('ahead') -and $line.Contains('behind')) {
+                $status += $status_code + 'c'
+            }
+            elseif ($line.Contains('ahead')) {
+                $status += $status_code + 'a'
+            }
+            elseif ($line.Contains('behind')) {
+                $status += $status_code + 'b'
+            }
+        } elseif (!$status.Contains($status_code)) {
+            $status += $status_code
         }
     }
 
-    if ($changes.count -gt 0) {
+    if ($status.count -gt 0) {
         Write-Host "[" -NoNewline -ForegroundColor Red
 
         # `=` – This branch has merge conflicts
@@ -40,13 +55,17 @@ function Write-GitStatus {
         # `+` — A new file has been added to the staging area
         # `»` — A renamed file has been added to the staging area
         # `✘` — A file's deletion has been added to the staging area
-        switch ($changes) {
-            '##' { Write-Host "⇡" -NoNewline -ForegroundColor Red }
-            '??' { Write-Host "?" -NoNewline -ForegroundColor Red }
-            'M'  { Write-Host "!" -NoNewline -ForegroundColor Red }
-            'A'  { Write-Host "+" -NoNewline -ForegroundColor Red }
-            'R'  { Write-Host "»" -NoNewline -ForegroundColor Red }
-            'D'  { Write-Host "✘" -NoNewline -ForegroundColor Red }
+        switch ($status) {
+            'UU'  { Write-Host "=" -NoNewline -ForegroundColor Red }
+            '##a' { Write-Host "⇡" -NoNewline -ForegroundColor Red }
+            '##b' { Write-Host "⇣" -NoNewline -ForegroundColor Red }
+            '##c' { Write-Host "⇕" -NoNewline -ForegroundColor Red }
+            '??'  { Write-Host "?" -NoNewline -ForegroundColor Red }
+            '$$'  { Write-Host "$" -NoNewline -ForegroundColor Red }
+            'M'   { Write-Host "!" -NoNewline -ForegroundColor Red }
+            'A'   { Write-Host "+" -NoNewline -ForegroundColor Red }
+            'R'   { Write-Host "»" -NoNewline -ForegroundColor Red }
+            'D'   { Write-Host "✘" -NoNewline -ForegroundColor Red }
         }
 
         Write-Host "] " -NoNewline -ForegroundColor Red
