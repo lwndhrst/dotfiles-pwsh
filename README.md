@@ -1,3 +1,3 @@
 # dotfiles-pwsh
 
-Put the profile in `%UserProfile%\Documents\PowerShell`. 
+Put the files into `$HOME\Documents\PowerShell\`. 
