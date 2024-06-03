@@ -92,4 +92,5 @@ Set-PSReadlineKeyHandler -Key "ctrl+e" -Function AcceptSuggestion
 #     return " "
 # }
 
+$ENV:STARSHIP_CONFIG = "$HOME\Documents\PowerShell\starship.toml"
 Invoke-Expression (&starship init powershell)
